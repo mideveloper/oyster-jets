@@ -1,0 +1,142 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8" />
+</head>
+<body>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+
+    var socket;
+
+    $(function () {
+        $("#btnuser").click(function () {
+
+            connect();
+        });
+
+        $("#btn").click(function () {
+
+            if(!socket){
+
+                alert("not connected");
+            } else {
+
+                socket.emit('subscribe',$("#channel").val() );
+            }
+        });
+
+        $("#btnPublish").click(function () {
+
+            if(!socket){
+
+                alert("not connected");
+            } else {
+
+                socket.emit('publish',{ "channel" : $("#channel").val(), "message" : $("#msg").val()} );
+            }
+        });
+        
+        $("#btnSendEvent").click(function () {
+
+            if(!socket){
+
+                alert("not connected");
+            } else {
+
+                socket.emit('sendevent', { to: $("#to").val(), type: $("#type").val(), data: $("#msg").val(), from : $("#user").val() });
+            }
+        });
+        
+    });
+
+    function connect(){
+
+        socket = io.connect('/');
+
+        socket.on('connecting', function () {
+            log('socket.io.connecting');
+        });
+
+        socket.on('connect', function () {
+            log('socket.io.connect');
+        });
+
+        socket.on('disconnect', function () {
+            log('socket.io.disconnect');
+        });
+
+        socket.on('reconnect', function () {
+            log('socket.io.reconnect');
+        });
+
+        socket.on('reconnecting', function () {
+            log('socket.io.reconnecting');
+        });
+
+        socket.on('connect_failed', function () {
+            log('socket.io.connect_failed');
+        });
+
+        socket.on('reconnect_failed', function () {
+            log('socket.io.reconnect_failed');
+        });
+
+        socket.on('error', function (err) {
+            log('socket.io.error: ' + (err ? err : "unknown"));
+        });
+
+        socket.on('pleaseregister', function () {
+            log('pleaseregister');
+            socket.emit('register', { user_id: $("#user").val() }, function () {
+                log('sent registration');
+            });
+        });
+
+        socket.on('message', function (data) {
+            log('channel: ' + data.channel + " :: message: " + data.message);
+        });
+
+        socket.on('connected', function () {
+            log('you are now connected as ' + $("#user").val());
+        });
+        
+        socket.on('eventsent', function () {
+            log('eventsent');
+        });
+        
+        socket.on('eventnotsent', function () {
+            log('eventnotsent');
+        });
+
+        socket.on('receiveevent', function (data) {
+            log(data.type + ':' + JSON.stringify(data.data));
+        });
+    }
+
+    function log(text){
+
+        $("#message").val($("#message").val() + text + '\n');
+    }
+
+</script>
+<h3>Jet Test</h3>
+your access_token:<input type="text" id="user" value="user" /><input type="button" id="btnuser" value="connect" />
+<br />
+send to uid:<input type="text" id="to" value="user" />
+<br />
+channel:<input type="text" id="channel" value="test" />
+<input type="button" id="btn" value="subscribe" />
+<br />
+<br />
+msg:<input type="text" id="msg" value="first message" />
+<input type="button" id="btnPublish" value="publish" />
+<br />
+type:<input type="text" id="type" value="test" />
+data:<input type="text" id="msg" value="{test:test}" />
+<input type="button" id="btnSendEvent" value="sendevent" />
+<textarea id="message" style="width:100%;" cols="80" rows="20"></textarea>
+</body>
+</html>
+
