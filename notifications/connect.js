@@ -21,6 +21,14 @@ function init(attributes){
         });
     };
     
+    Connect.prototype.unsubscribe = function unsubscribe(user_id, channel){
+        
+        return pub_sub_server.unsubscribe(user_id, channel)
+        .then(function(){
+            return;    
+        });
+    };
+    
     Connect.prototype.publish = function publish(sender_id, channel, data){
         
         return pub_sub_server.publish(sender_id, channel, data)

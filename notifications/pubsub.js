@@ -74,9 +74,12 @@ function createSubscriber(attributes) {
     }
 
     function _unsubscribe(ctx, channel) {
-        if (_all_channels[channel]) {
-            delete _all_channels[channel].subscribers[ctx.id];
-        }
+        
+        // delete user from that channel
+        return new ChannelModel({ content_id : channel, user_id: ctx }).removeUser()
+        .then(function(){
+            return;
+        });
     }
 
     function publishMessageToAllSubscribers(channel, rec_message) {
@@ -128,8 +131,8 @@ function createSubscriber(attributes) {
         return _subscribe(user_id, channel);
     };
 
-    Subscriber.prototype.unsubscribe = function unsubscribe(channel) {
-        _unsubscribe(this, channel);
+    Subscriber.prototype.unsubscribe = function unsubscribe(user_id, channel) {
+        return _unsubscribe(user_id, channel);
     };
 
     Subscriber.prototype.publish = function publish(sender_id, channel, data) {

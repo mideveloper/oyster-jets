@@ -46,7 +46,7 @@ function notifyViaIosNotification(user_id, event_type, data){
         platform: 0,
         push_token: "07f47ed3599ec207204700b95a67e801ccdb6eb73f0d48717ac061081d918816"
     }];
-    
+    // get users devices push token from db
     ios.sendMessage(devices, event_type, data);
 }
 

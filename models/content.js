@@ -50,4 +50,18 @@ model.prototype.saveContent = function saveContent(){
     });
 };
 
+model.prototype.removeUser = function removeUser(){
+    var self = this;
+    
+    var mongo_object = self.getDBObject(self.input);
+
+    return self.update(
+            { _id: mongo_object._id },
+            { $pull: { user_ids: self.input.user_id }}
+    )
+    .then(function (res) {
+        return res;
+    });
+};
+
 module.exports = model;

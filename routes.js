@@ -12,6 +12,7 @@ function routes(app) {
     
     //***** Connect Controller ****//
     app.post("/subscribe", connectController.subscribe);
+    app.post("/unsubscribe", connectController.unsubscribe);
     app.post("/publish", connectController.publish);
     
 }

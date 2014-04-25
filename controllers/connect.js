@@ -18,6 +18,22 @@ function subscribe(req, res, next){
     });
 }
 
+function unsubscribe(req, res, next){
+    
+    // get inputs
+    var user_id = req.param("user_id"), 
+        channel = req.param("content_id");
+
+    connect.unsubscribe(user_id, channel).then(function(output) {
+        res.send(200, global.shape(output));
+    }).
+    catch (function(e) {
+        next(e);
+    }).error(function(e) {
+        next(e);
+    });
+}
+
 function publish(req, res, next){
     
     // get inputs
@@ -36,4 +52,5 @@ function publish(req, res, next){
 }
 
 module.exports.subscribe = subscribe;
+module.exports.unsubscribe = unsubscribe;
 module.exports.publish = publish;
