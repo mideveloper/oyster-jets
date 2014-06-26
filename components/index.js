@@ -15,6 +15,7 @@ function loadPackages() {
     packages.Redis = require("redis");
     packages.Emitter = require("primus-emitter");
     packages.Request = require("request");
+    packages.Apn = require("apn");
     
     global.Packages = packages;
 }

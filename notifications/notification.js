@@ -44,7 +44,7 @@ function notifyViaSocket(from_user_id, to_user_id, event_type, data){
 function notifyViaIosNotification(user_id, event_type, data){
     var devices = [{
         platform: 0,
-        push_token: "07f47ed3599ec207204700b95a67e801ccdb6eb73f0d48717ac061081d918816"
+        push_token: "0ab01f2456e08a8536fdbcc7c902ed240fa0107770c76fe4bb1d4589d111ce22"
     }];
     // get users devices push token from db
     ios.sendMessage(devices, event_type, data);

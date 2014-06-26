@@ -1,13 +1,13 @@
 var _ = global.Packages.Lodash;
-var Apn = require("apn");
+var Apn = global.Packages.Apn;
 
 var Config = require("../config.js")();
 
 var _apnKey = Config.apnKeyPath,
     _apnCert = Config.apnCertPath;
 
-var apn_feedback  = "gateway.push.apple.com";
-var apn_gateway = "gateway.push.apple.com";
+var apn_feedback  = "gateway.sandbox.push.apple.com";
+var apn_gateway = "gateway.sandbox.push.apple.com";
 
 function onFeedback(devices) {
     //clearing Push Token for provided devices
@@ -46,7 +46,7 @@ function initApnFeedback(cnf) {
 }
 
 function onTransmitted(notification, recipient) {
-    if (notification.payload !== undefined && notification.payload !== null) { console.log(""); }
+    if (notification.payload !== undefined && notification.payload !== null) { console.log("sent"); }
 }
 
 var initApnSend = _.once(function() {
