@@ -27,8 +27,12 @@ function isUserOnline(id){
 function sendEvent(from_user_id, to_user_id, event_type, data){
         
     return getUserServer(to_user_id).then(function(server) {
-        if(server){
-            server.onSendEvent(from_user_id, to_user_id, event_type, data);
+        if(server && server.socket_id){
+            _io.sockets.socket(server.socket_id).emit('receiveevent', {
+                from_user_id: from_user_id,
+                type: event_type, 
+                data: data
+            });
             return true;
         }
         else{
@@ -44,23 +48,22 @@ function onConnection(socket) {
         port: 6379
     });
 
-    // binding event to client when message recieved from server
-    pub_sub_server.onMessage = function (channel, message) {
-        socket.emit("message", {
-            channel: channel,
-            message: message
-        });
-    };
-    
-    pub_sub_server.onSendEvent = function (from_user_id, to_user_id, event_type, data) {
-        socket.emit("receiveevent", {
-            from_user_id: from_user_id,
-            type: event_type, // conversation_id ??
-            data: data
-        });
-    };
+    pub_sub_server.socket_id = socket.id;
     
     socket.on("register", function (data) {
+        
+        if (!data) {
+			socket.emit("invalidinput", {
+				message : "missing data"
+			});
+			return;
+		}
+		if (!data.user_id) {
+			socket.emit("invalidinput", {
+				message : "missing data.user_id"
+			});
+			return;
+		}
         
         socket.set("user_id", data.user_id, function() {
             
@@ -75,6 +78,31 @@ function onConnection(socket) {
 
     socket.on("sendevent", function(data) {
         
+        if (!data) {
+			socket.emit("invalidinput", {
+				message : "missing data"
+			});
+			return;
+		}
+        if (!data.from) {
+			socket.emit("invalidinput", {
+				message : "missing data.from"
+			});
+			return;
+		}
+		if (!data.to) {
+			socket.emit("invalidinput", {
+				message : "missing data.to"
+			});
+			return;
+		}
+		if (!data.type) {
+			socket.emit("invalidinput", {
+				message : "missing data.type"
+			});
+			return;
+		}
+        
 		sendEvent(data.from, data.to, data.type, data.data)
 		.then(function(didSend) {
 
@@ -87,13 +115,13 @@ function onConnection(socket) {
 		
 	});
     
-    socket.on("subscribe", function (channel) {
+    socket.on("subscribe", function (data) {
 
-        pub_sub_server.subscribe(channel);
+        pub_sub_server.subscribe(data.user_id, data.channel);
     });
 
     socket.on("publish", function (data) {
-        pub_sub_server.publish(data.channel, data.message);
+        pub_sub_server.publish(data.from, data.channel, data);
         
     });
 

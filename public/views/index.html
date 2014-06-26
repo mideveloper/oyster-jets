@@ -23,7 +23,7 @@
                 alert("not connected");
             } else {
 
-                socket.emit('subscribe',$("#channel").val() );
+                socket.emit('subscribe', { "channel" : $("#channel").val(), "user_id": $("#user").val()});
             }
         });
 
@@ -34,7 +34,7 @@
                 alert("not connected");
             } else {
 
-                socket.emit('publish',{ "channel" : $("#channel").val(), "message" : $("#msg").val()} );
+                socket.emit('publish',{ "from" : $("#user").val(), "channel" : $("#channel").val(), "message" : $("#msg").val()} );
             }
         });
         
@@ -84,7 +84,11 @@
         });
 
         socket.on('error', function (err) {
-            log('socket.io.error: ' + (err ? err : "unknown"));
+            log('socket.io.error: ' + (err ? err.message : "unknown"));
+        });
+        
+        socket.on('invalidinput', function (data) {
+            log('invalidinput: ' + data.message);
         });
 
         socket.on('pleaseregister', function () {

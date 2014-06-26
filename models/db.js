@@ -3,7 +3,7 @@ var db = global.Packages.Oyster.Model.initialize({
         client : "mongo",
         host: "localhost",
         port: "27017",
-        db: "geouser"
+        db: "jets"
     });
 
 module.exports = db;

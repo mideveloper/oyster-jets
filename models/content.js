@@ -10,7 +10,7 @@ model.prototype.getDBObject = function getDBObject(object) {
 
     var mongo_obj = {};
 
-    mongo_obj._id = object.content_id ? parseInt(object.content_id) : object.content_id ;
+    mongo_obj._id = object.content_id;
     mongo_obj.user_ids = object.user_ids;
     mongo_obj.type = object.type;
     return mongo_obj;
